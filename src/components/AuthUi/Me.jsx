@@ -16,8 +16,8 @@ function Me() {
       console.log(res);
       setUserInfo(res.data);
     } catch (error) {
-      // setError("Failed to fetch user data.");
-      console.error(error);
+      console.log(error.response.data.message);
+      console.log(error)
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ function Me() {
             
             <div className="flex w-full justify-between items-center">
               <div className="text-lg  text-center">
-                <div className="text-4xl font-bold">{userInfo.friends || " "}</div>
+                <div className="text-4xl font-bold">{userInfo.friends }</div>
                 <div>Friends</div>
               </div>
               <div className="text-lg  text-center">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { login } from "../../api/authService";
@@ -9,33 +9,32 @@ function Login() {
   const { handleSubmit, register } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [loading,setLoading]=useState(false);
 
-  const handleLogin = (data) => {
-    const fetchUser = async () => {
+    const handleLogin = async (data) => {
       try {
+      setLoading(true);
         const res = await login(data);
-        console.log(res.data);
+        // console.log(res.data);
         handleLoginSuccess(res.data); // Handle successful login
       } catch (error) {
-         const status=error.response.status
-         console.log(status) 
-         if(404)
-          {alert("Invalid Credentials")}
-         else if(401)
-          {alert("")}
+        alert(error.response.data.message);
+      }
+      finally{
+        setLoading(false)
       }
     };
-  
-    fetchUser(); // No need for .catch since errors are handled internally
-  };
+   
   
 
   const handleLoginSuccess = (data) => {
-    const { loggedInUser, accessToken } = data;
-    console.log(loggedInUser);
+    const { loggedInUser, accessToken,refreshToken } = data;
+    // console.log(loggedInUser);
     localStorage.setItem("accessToken", accessToken);
-
+    localStorage.setItem("refreshToken", refreshToken);
+    
     if (loggedInUser) dispatch(authLogin(loggedInUser));
+    setLoading(false)
     alert("Login Successfull");
 
     navigate("/");
@@ -45,9 +44,9 @@ function Login() {
     <div className="bg-white w-1/3  py-3  px-4 rounded-md   ">
       <h1 className="font-bold text-3xl text-center ">Welcome Back</h1>
       <div className="flex items-center my-4  p-3  h-full">
-        <form onSubmit={handleSubmit(handleLogin)} className="space-y-1 w-full">
+        <form   onSubmit={handleSubmit(handleLogin)} className="space-y-1 w-full">
           <div className="space-y-2  ">
-            <label className="font-semibold " for="username">
+            <label className="font-semibold " htmlFor="username">
               Username:
             </label>
             <input
@@ -60,7 +59,7 @@ function Login() {
             />
           </div>
           <div className="space-y-2">
-            <label className="font-semibold" for="password">
+            <label className="font-semibold" htmlFor="password">
               Password:
             </label>
             <input
@@ -79,10 +78,12 @@ function Login() {
           </div>
           <button
             type="submit"
+            disabled={loading}
+            
             className="bg-blue-500 hover:bg-blue-700 text-white
             font-bold py-2 px-4 rounded w-full"
           >
-            Login
+            {loading ? "Loading..." : "Login"}
           </button>
         </form>
       </div>

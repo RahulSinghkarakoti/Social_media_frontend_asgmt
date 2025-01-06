@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { signup } from "../../api/authService";
@@ -12,23 +12,29 @@ function SignUp() {
     register,
     formState: { errors },
   } = useForm();
+    const [loading,setLoading]=useState(false);
+  
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSignup = async (data) => {
     try {
+      setLoading(true);
       const res = await signup(data);
-      console.log(res.data);
+      // console.log(res.data);
       handleSignUpSuccess(res.data);
     } catch (error) {
       // console.log(error.response.data.message)
       alert(error.response.data.message);
     }
+    finally{
+      setLoading(false);
+    }
   };
   const handleSignUpSuccess = (data) => {
     const { user, accessToken, refreshToken } = data;
-    console.log(user);
+    // console.log(user);
     localStorage.setItem("accessToken", accessToken);
     localStorage.setItem("refreshToken", refreshToken);
     
@@ -46,7 +52,7 @@ function SignUp() {
           className="space-y-1 w-full"
         >
           <div className="space-y-1  ">
-            <label className="font-semibold " for="username">
+            <label className="font-semibold " htmlFor="username">
               Username:
             </label>
             <br></br>
@@ -61,7 +67,7 @@ function SignUp() {
             {errors.username && <p>username is required.</p>}
           </div>
           <div className="space-y-1 ">
-            <label className="font-semibold " for="email">
+            <label className="font-semibold " htmlFor="email">
               Email:
             </label>
             <br></br>
@@ -76,7 +82,7 @@ function SignUp() {
             {errors.email && <p>email is required.</p>}
           </div>
           <div className="space-y-1">
-            <label className="font-semibold" for="password">
+            <label className="font-semibold" htmlFor="password">
               Password:
             </label>
             <br></br>
@@ -97,10 +103,11 @@ function SignUp() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="bg-blue-500 hover:bg-blue-700 text-white
           font-bold my-4 py-2 px-4 rounded w-full"
           >
-            SignUp
+            {loading ? "Wait..":"SignUp"}
           </button>
         </form>
       </div>

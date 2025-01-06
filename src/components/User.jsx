@@ -21,7 +21,7 @@ const User = () => {
     setError(null);
     try {
       const res = await getUser(userId);
-      console.log(res);
+      // console.log(res);
       setUserInfo(res.data);
       setIsExistingFriend(res.data.isExistingFriend);
     } catch (error) {
@@ -33,9 +33,14 @@ const User = () => {
   };
 
   const getMutualFriends = async () => {
-    const res = await recommendFriends(userId);
-    console.log(res.data);
-    setMutualFriends(res.data);
+   try {
+     const res = await recommendFriends(userId);
+     // console.log(res.data);
+     setMutualFriends(res.data);
+   } catch (error) {
+    console.log(error.response.data.message);
+    console.log(error)
+   }
   };
 
   useEffect(() => {

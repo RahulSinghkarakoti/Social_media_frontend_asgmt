@@ -12,13 +12,17 @@ function Home() {
   const loginStatus=useSelector(state=>state.user.status)
 
   const fetchFriends=async()=>{
+   try {
+     const res=await  getFriends()
+     setFriends(res.data)
+   } catch (error) {
+    console.log(error.response.data.message);
 
-    const res=await  getFriends()
-    setFriends(res.data)
-    console.log(res.data)
+   }
   }
 
   useEffect( ()=>{
+    // if(loginStatus)
     fetchFriends()
   },[])
 

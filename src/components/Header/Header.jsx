@@ -12,11 +12,15 @@ function Header() {
   const navigate=useNavigate()
   const [srchParams, setSrchParams] = useState();
   const [srchRecommendations,setSrchRecommendations]=useState([])
+
   const fetchRecommendations = async (searchTerm) => {
-    console.log("Fetching recommendations for:", searchTerm);
-    const res = await searchUsers(searchTerm);
-    console.log(res.data);
-    setSrchRecommendations(res.data)
+    try {
+      const res = await searchUsers(searchTerm);
+      setSrchRecommendations(res.data)
+    } catch (error) {
+      console.log(error.response.data.message);
+      console.log(error)
+    }
   };
 
   const debouncedFetchRecommendations = useCallback(

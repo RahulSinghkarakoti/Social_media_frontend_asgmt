@@ -10,13 +10,18 @@ function Notification() {
   const [userInfo, setUserInfo] = useState([]);
 
   const getSenderInfo = async (request) => {
-    const senderInfoRes = await getUser(request.senderId);
-    
-    return  {
-        username: senderInfoRes.data.user.username,
-        email: senderInfoRes.data.user.email,
-        requestId:request._id
-      } 
+   try {
+     const senderInfoRes = await getUser(request.senderId);
+     
+     return  {
+         username: senderInfoRes.data.user.username,
+         email: senderInfoRes.data.user.email,
+         requestId:request._id
+       } 
+   } catch (error) {
+    console.log(error.response.data.message);
+    console.log(error)
+   }
   };
 
   const getNotification = async () => {
@@ -44,29 +49,30 @@ function Notification() {
     }
   };
 
-  useEffect(() => {
-    getNotification();
-  }, []);
-
-  const handleAcceptRequest=async(requestId)=>{
-       try {
-         const res=await acceptFriendRequest(requestId)
-         if(res.data)
-             alert("request accepted")
-       } catch (error) {
-        console.log(error)
-       }
-  }
   
-  const handleRejectRequest=async(requestId)=>{
+  const handleAcceptRequest=async(requestId)=>{
     try {
-      const res=await rejectFriendRequest(requestId)
-      if(res.data)
+      const res=await acceptFriendRequest(requestId)
+         if(res.data)
           alert("request accepted")
-    } catch (error) {
-     console.log(error)
+       } catch (error) {
+         console.log(error)
+        }
+      }
+
+      const handleRejectRequest=async(requestId)=>{
+        try {
+          const res=await rejectFriendRequest(requestId)
+          if(res.data)
+              alert("request accepted")
+        } catch (error) {
+         console.log(error)
+        }
     }
-}
+      useEffect(() => {
+        getNotification();
+      }, [handleAcceptRequest,handleRejectRequest]);
+      
   
 
   if (loading) {
